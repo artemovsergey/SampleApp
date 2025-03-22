@@ -6,8 +6,8 @@ import { User } from 'src/models/user.entity';
 
 @Injectable()
 export class UsersService implements IUserRepository {
-
-  getall(): User[] {
+  
+  getAll(): User[] {
     throw new Error('Method not implemented.');
   }
   

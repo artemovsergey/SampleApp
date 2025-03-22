@@ -9,4 +9,5 @@ export interface IUserRepository{
     update(arg0: number, updateUserDto: UpdateUserDto): unknown;
     remove(arg0: number): unknown;
     findAll(): User[]
+    getAll(): User[]
 }

@@ -3,7 +3,7 @@ import { IUserRepository, USER_REPOSITORY } from 'src/interfaces/user.repository
 import { User } from 'src/models/user.entity';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@Controller('users')
+@Controller('api/users')
 export class UsersController {
   constructor(
     @Inject(USER_REPOSITORY)
@@ -12,35 +12,36 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: User }) // Указываем тип DTO
+  @ApiBody({ type: User })
   @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() user: User) {
-    return 'User created';
+  create(@Body() user: User) : User {
+    this.usersRepository.create(user)
+    return user;
   }
 
-  // @Get()
-  // findAll() {
-  //   return this.usersRepository.findAll();
-  // }
+  @Get()
+  findAll() {
+    return this.usersRepository.getAll();
+  }
 
-  // @Get(':id')
-  // async findOne(@Param('id') id: string) {
-  //   const user = await this.usersRepository.findOne(+id);
-  //   if (!user) {
-  //     throw new NotFoundException('User not found');
-  //   }
-  //   return user;
-  // }
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    const user = await this.usersRepository.findOne(+id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: User) {
-  //   return this.usersRepository.update(+id, updateUserDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: User) {
+    return this.usersRepository.update(+id, updateUserDto);
+  }
 
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // remove(@Param('id') id: string) {
-  //   return this.usersRepository.remove(+id);
-  // }
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: string) {
+    return this.usersRepository.remove(+id);
+  }
 }

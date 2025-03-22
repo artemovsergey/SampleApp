@@ -384,3 +384,25 @@ Content-Type:  application/json
 - dotnet dev-certs https --check --trust
 
 или удалить nuget.config и перезагрузить обязательно
+
+# CORS
+
+main.ts
+
+```ts
+app.enableCors();
+
+// Или с кастомными настройками
+app.enableCors({
+  origin: 'https://example.com', // Разрешенный домен
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешенные HTTP-методы
+  allowedHeaders: 'Content-Type, Accept', // Разрешенные заголовки
+  credentials: true, // Разрешить передачу кук и заголовков авторизации
+});
+```
+
+## Документация API через Swagger
+
+- документация доступна по адресу swagger с добавлением `-json`, например
+`http://localhost:3000/api-json`
+- потом можно создать коллекцию в Postman

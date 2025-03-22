@@ -13,10 +13,21 @@ async function bootstrap() {
     .addTag('пример')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  console.log(document); // Логируем документ Swagger
+  console.log(document);
   SwaggerModule.setup('api', app, document);
 
-  app.useGlobalPipes(new ValidationPipe()); // Подключение ValidationPipe
+  // Включение CORS с настройками по умолчанию
+  app.enableCors();
+
+  // Или с кастомными настройками
+  // app.enableCors({
+  //   origin: 'https://example.com', // Разрешенный домен
+  //   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешенные HTTP-методы
+  //   allowedHeaders: 'Content-Type, Accept', // Разрешенные заголовки
+  //   credentials: true, // Разрешить передачу кук и заголовков авторизации
+  // });
+
+  app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(process.env.PORT ?? 3000);
 }

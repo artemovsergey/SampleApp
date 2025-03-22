@@ -5,7 +5,7 @@ using SampleApp.API.Validations;
 namespace SampleApp.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IUserRepository _repo;
@@ -17,14 +17,12 @@ public class UsersController : ControllerBase
     [HttpPost]
     public ActionResult CreateUser(User user)
     {
-
         var validator = new FluentValidator();
         var result = validator.Validate(user);
         if (!result.IsValid)
         {
             throw new Exception($"{result.Errors.First().ErrorMessage}");
         }
-
         return Created("",_repo.CreateUser(user));
     }
 
@@ -33,7 +31,6 @@ public class UsersController : ControllerBase
     {
         return Ok(_repo.GetUsers());
     }
-
 
     [HttpPut]
     public ActionResult UpdateUser(User user)

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from 'src/dto/update-user.dto';
 import { IUserRepository } from 'src/interfaces/user.repository.';
 
@@ -6,28 +6,41 @@ import { User } from 'src/models/user.entity';
 
 @Injectable()
 export class UserMemoryRepository implements IUserRepository {
-
-  getall(): User[] {
-    throw new Error('Method not implemented.');
-  }
   
+  users: User[] = [];
+
+  getAll(): User[] {
+    console.log(this.users)
+    return this.users;
+  }
+
   create(user: User) {
+    this.users.push(user);
+    console.log(user)
     return user;
   }
 
-  findAll() : User[] {
-    return []
+  findAll(): User[] {
+    return [];
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: number): User {
+    var user = this.users.find((u) => u.id == id);
+    if (user != null) {
+      return user;
+    } else {
+      throw new NotFoundException('Нет такого пользователя!');
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: number, user: User) {
+    var u = this.findOne(id)
+    const obj =  { ...u, ...user}
+    return obj
   }
 
   remove(id: number) {
-    return `This action removes a #${id} user`;
+    var user = this.findOne(id)
+    this.users = this.users.filter(u => u.id != id)
   }
 }

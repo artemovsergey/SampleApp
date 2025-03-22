@@ -10,7 +10,7 @@ export class User {
 
     @IsString()
     @ApiProperty({ example: 'John Doe', description: 'The name of the user' })
-    @Validate(CustomTextValidator)
+    // @Validate(CustomTextValidator)
     @Length(3, 5,{"message": "Минимальная длина имени 3, максимальная 5"})
     name: string;
 }
