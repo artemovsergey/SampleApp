@@ -7,9 +7,9 @@
 - cd myApp
 - ionic cap add android
 
-- ionic cap open android (если надо откурыть в AS)
+- ionic cap open android (если надо открыть в AS)
 
-- ionic cap run android (запуск черезе capacitor cli) (--target=192.168.1.2:5555  --no-sync)
+- ionic cap run android (запуск через capacitor cli) (--target=192.168.1.2:5555  --no-sync)
 
 ## Добавление пути к Android Sdk
 
