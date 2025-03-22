@@ -1,17 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Inject } from '@nestjs/common';
 
-import { User } from './models/user';
-import { UsersService } from './services/users.service';
+import { IUserRepository, USER_REPOSITORY } from './interfaces/user.repository.';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly userService: UsersService,
+    @Inject(USER_REPOSITORY) // Внедряем по токену
+     private readonly userMemoryRespository: IUserRepository
   ) {}
 
-  @Get('users1')
-  getUsers(id1: number): User[] {
-    return this.userService.findAll()
-  }
+  // @Get('users1')
+  // getUsers(id1: number): User[] {
+  //   return this.userMemoryRespository.findAll()
+  // }
   
 }
