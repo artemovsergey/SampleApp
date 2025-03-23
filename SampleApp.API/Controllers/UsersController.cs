@@ -1,4 +1,7 @@
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
+using SampleApp.API.Dtos;
 using SampleApp.API.Entities;
 using SampleApp.API.Validations;
 
@@ -8,6 +11,7 @@ namespace SampleApp.API.Controllers;
 [Route("api/[controller]")]
 public class UsersController : ControllerBase
 {
+    private HMACSHA256 hmac = new HMACSHA256();
     private readonly IUserRepository _repo;
     public UsersController(IUserRepository repo)
     {
@@ -15,15 +19,24 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public ActionResult CreateUser(User user)
+    public ActionResult CreateUser(UserDto userDto)
     {
+
+        var user = new User()
+        {
+            Login = userDto.Login,
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)),
+            PasswordSalt = hmac.Key,
+            Name = ""
+        };
+
         var validator = new FluentValidator();
         var result = validator.Validate(user);
         if (!result.IsValid)
         {
             throw new Exception($"{result.Errors.First().ErrorMessage}");
         }
-        return Created("",_repo.CreateUser(user));
+        return Created("", _repo.CreateUser(user));
     }
 
     [HttpGet]
