@@ -27,13 +27,22 @@ dependencies {
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	// Spring Data JPA
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
 	// PostgreSQL Driver
-	runtimeOnly("org.postgresql:postgresql")
+
+    runtimeOnly("org.postgresql:postgresql")
+
+	// Luquibase
+
+	//implementation("org.liquibase:liquibase-core")
+
 
 	// Flyway
+
 	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
 
 	// Дополнительно: Spring Boot DevTools для удобства разработки
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
