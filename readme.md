@@ -1,13 +1,15 @@
-ы# Тестовое приложение SampleApp
+# Разработка API
 
+- Net
+- Nest
+- Kotlin Spring
 
+# Frontend
 
-# Разработка API на Nest
+- Angular
 
-$ npm i -g @nestjs/cli
-$ nest new project-name
+# Mobile
 
-
-nest start
-
-nest g class user
+- Flutter
+- Jetpack Compose
+- Ionic
