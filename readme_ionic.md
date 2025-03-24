@@ -14,9 +14,13 @@
 # Работа с внешним эмулятором
 
 C:\Users\prep\AppData\Local\Android\Sdk\emulator
+
 ./emulator -list-avds
+
 ./emulator -avd <имя_вашего_эмулятора>
+
 Найдите исполняемый файл emulator.exe в папке emulator внутри Android SDK.
+
 Создайте ярлык на рабочем столе и добавьте в свойства ярлыка параметр -avd <имя_вашего_эмулятора>.
 
 ## Добавление пути к Android Sdk
