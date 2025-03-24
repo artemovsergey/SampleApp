@@ -31,6 +31,12 @@ C:\Users\prep\AppData\Local\Android\Sdk\emulator
 sdk.dir=C:\\Users\\asv\\AppData\\Local\\Android\\Sdk
 ```
 
+gradle.properties
+```
+org.gradle.java.home=C:\\Program Files\\Java\\jdk-23
+```
+
+
 ## Горячая перезагрузка
 
 - ionic serve --no-open --host=0.0.0.0 --port=8100 --configuration=production
