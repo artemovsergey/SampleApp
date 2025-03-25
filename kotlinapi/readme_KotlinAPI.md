@@ -4,7 +4,7 @@
 
 **Замечание**: можно настраивавать начальный проект через сайт Spring Initializer
 
-- добавьте зависимости для Spring и g
+- добавьте зависимости для Spring:
 
 build.gradle.kts
 `
@@ -63,305 +63,253 @@ class HelloController {
 
 # Подключение Swagger
 
-- добавьте зависимоть
+- добавьте зависимость
 
+`
+//Swagger
+implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
+`
 
+- создайте в `kotlin.api` новый пакет `config` и создайте класс `SwaggerConfig`:
+
+SwaggerConfig.kt
+```kt
+package com.example.kotlinapi.config
+
+import io.swagger.v3.oas.models.info.Info
+import io.swagger.v3.oas.models.OpenAPI
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+
+@Configuration
+class SwaggerConfig {
+
+    @Bean
+    fun customOpenAPI(): OpenAPI {
+        return OpenAPI()
+            .info(
+                Info()
+                    .title("Title API")
+                    .version("1.0.0")
+                    .description("This is a demo API documented with Swagger and SpringDoc.")
+            )
+    }
+}
 ```
 
+- в application.yml добавьте секцию:
+
 ```
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+```
+
+- перезапустите сервер и проверьте работу Swagger по адресу `http://localhost:8080/swagger-ui/index.html`
 
 
 ## Разработка домена приложения. Модель пользователя
 
-Создайте в проекте в папке src папку `models`, в которой создайте класс **user.entity.ts**
+- установите зависимость
 
-```ts
-export class User {
-  id: number;
-  name: string;
+`
+	// PostgreSQL Driver
+    runtimeOnly("org.postgresql:postgresql")
+	// Spring Data JPA
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+`
+
+- добавьте в `application.yml` настройки для подключения к базе данных Postgres:
+
+```yml
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+spring:
+  application:
+    name: kotlinapi
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/SampleApp
+    username: postgres
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+```
+
+- создайте пакет `models`, в котором создайте класс `User.kt`
+
+
+```kt
+package com.example.kotlinapi.models
+
+import jakarta.persistence.*
+
+@Table(name = "\"Users\"")
+@Entity
+data class User(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long = 0,
+    val name: String = ""
+)
+```
+
+# Репози## Реализация CRUD
+
+- создайте пакет `repositories`  и в нем создайте интерфейс `UserRepository`:
+
+```kt
+package com.example.kotlinapi.repositories
+
+import com.example.kotlinapi.models.User
+
+interface UserRepository {
+fun save(user: User): User
+fun findById(id: Long): User?
+fun findAll(): List<User>
+fun deleteById(id: Long)
+fun update(user: User): User
 }
 ```
 
-# Интерфейсы
+- далее в этой же папке создайте реализацию этого интерфейса в классе `UserRepositoryImpl`:
 
-Создайте папку `interfaces` и поместите следующий интерфейс IUserRepository
 
-```ts
-import { User } from 'src/models/user';
+```kt
+package com.example.kotlinapi.repositories
 
-export interface IUserRepository {
-  create(user: User): User;
-  findOne(arg0: number): unknown;
-  update(arg0: number, updateUserDto: UpdateUserDto): unknown;
-  remove(arg0: number): unknown;
-  findAll(): User[];
-}
-```
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
+import com.example.kotlinapi.models.User
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
-## Реализация CRUD в UserRepository
+@Repository
+class UserRepositoryImpl : UserRepository {
 
-Создайте папку `repositories` и поместите там следующий класс `usermemory.repository.ts`, который будет имплементировать (реализовывать) интерфейс `IUserRepository`.
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
 
-```ts
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from 'src/dto/create-user.dto';
-import { UpdateUserDto } from 'src/dto/update-user.dto';
-import { IUserRepository } from 'src/interfaces/IUserRepository';
+    @Transactional
+    override fun save(user: User): User {
+        entityManager.persist(user)
+        return user
+    }
 
-import { User } from 'src/models/user';
+    @Transactional(readOnly = true)
+    override fun findById(id: Long): User? {
+        return entityManager.find(User::class.java, id)
+    }
 
-@Injectable()
-export class UserMemoryRepository implements IUserRepository {
-  getall(): User[] {
-    throw new Error('Method not implemented.');
-  }
+    @Transactional(readOnly = true)
+    override fun findAll(): List<User> {
+        val query = entityManager.createQuery("SELECT u FROM User u", User::class.java)
+        return query.resultList
+    }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
+    @Transactional
+    override fun deleteById(id: Long) {
+        val user = findById(id)
+        if (user != null) {
+            entityManager.remove(user)
+        }
+    }
 
-  findAll(): User[] {
-    return [];
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+    @Transactional
+    override fun update(user: User): User {
+        return entityManager.merge(user)
+    }
 }
 ```
 
 # Создание UsersController для управления пользователями
 
-- создайте папку controllers. В папке создайте файл `users.controller.ts`:
+- создайте пакет `controllers` и создайте новый класс UsersController:
 
-```ts
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UpdateUserDto } from '../dto/update-user.dto';
-import { UserMemoryRepository } from 'src/repositories/usermemory.repository';
+```kt
+package com.example.kotlinapi.controllers
 
-@Controller('users')
-export class UsersController {
-  constructor(private readonly usersRepository: UserMemoryRepository) {}
+import com.example.kotlinapi.models.User
+import org.springframework.web.bind.annotation.*
+import com.example.kotlinapi.repositories.UserRepositoryImpl
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersRepository.create(createUserDto);
-  }
+@RestController
+@RequestMapping("/users")
+class UsersController(private val userRepository: UserRepositoryImpl) {
 
-  @Get()
-  findAll() {
-    return this.usersRepository.findAll();
-  }
+    @GetMapping
+    fun getAllUsers(): List<User> = userRepository.findAll()
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersRepository.findOne(+id);
-  }
+    @GetMapping("/{id}")
+    fun getUserById(@PathVariable id: Long): User {
+        return userRepository.findById(id) ?: throw Exception()
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersRepository.update(+id, updateUserDto);
-  }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersRepository.remove(+id);
-  }
+    @PostMapping
+    fun createUser(@RequestBody user: User): User = userRepository.save(user)
+
+    @PutMapping("/{id}")
+    fun updateUser(@PathVariable id: Long, @RequestBody user: User): User {
+        return if (userRepository.findById(id) != null) {
+            userRepository.save(user.copy(id = id))
+        } else {
+            throw RuntimeException("User not found")
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteUser(@PathVariable id: Long) {
+        userRepository.deleteById(id)
+    }
 }
 ```
 
-### Подключение Swagger
+Теперь откройте браузер и перейдите по адресу http://localhost:8080/swagger-ui/index.html. Вы увидите автоматически сгенерированную документацию API.
 
-- перейдите в проект nest и выполните `npm install @nestjs/swagger swagger-ui-express`
-
-### Настройка Swagger в основном файле приложения
-
-main.ts
-
-```ts
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  const config = new DocumentBuilder()
-    .setTitle('Пример API')
-    .setDescription('Описание API')
-    .setVersion('1.0')
-    .addTag('пример')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
-
-  await app.listen(process.env.PORT ?? 3000);
-}
-
-bootstrap();
-```
-
-Теперь вы можете использовать декораторы из `@nestjs/swagger` для описания ваших контроллеров и методов. Например:
-
-```ts
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
-import { ApiTags, ApiResponse, ApiParam } from '@nestjs/swagger';
-
-@ApiTags('пример')
-@Controller('example')
-export class ExampleController {
-  @Get()
-  @ApiResponse({ status: 200, description: 'Успешный ответ' })
-  findAll(): string {
-    return 'Это пример GET-запроса';
-  }
-
-  @Post()
-  @ApiResponse({ status: 201, description: 'Успешное создание' })
-  create(@Body() createExampleDto: any): string {
-    return 'Это пример POST-запроса';
-  }
-
-  @Get(':id')
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiResponse({ status: 200, description: 'Успешный ответ' })
-  findOne(@Param('id') id: number): string {
-    return `Это пример GET-запроса с параметром ${id}`;
-  }
-}
-```
-
-> Замечание: Обратите внимание, что имена ваших файлов должны иметь один из следующих суффиксов: ['.dto.ts', '.entity.ts'] (например, create-user.dto.ts), чтобы плагин мог их проанализировать.
-
-Теперь откройте браузер и перейдите по адресу http://localhost:3000/api (или по тому адресу, который вы указали в SwaggerModule.setup). Вы увидите автоматически сгенерированную документацию API.
-
-- запустите API: `nest start --watch` и в средстве Swagger по адресу `http://localhost:[port]/swagger/index.html` попробуйте выполнить конечную точку для получения всех пользователей.
-
-На текущем моменте вы должны получить ошибку:
-
-```
-Nest can't resolve dependencies of the AppController (?). Please make sure that the argument UserMemoryRepository at index [0] is available in the AppModule context.
-```
-
-Эта ошибка говорит о том, что контроллеру AppController в конcтруктор требуется реализация интерфейса `IUserRepository`, которую мы будем получать из контейнера внедрения зависимостей (DI).
-
-# Контейнер внедрения зависимостей (Dependency Injection)
-
-Контроллер `UsersController` запрашивает в своем конструкторе
-
-```ts
-  constructor(
-    private readonly usersRepository: IUserRepository
-  ) {}
-```
-
-реализацию интерфейса `IUserRepository`, который ему должен предоставить DI (Dependency Injection) - контейнер внедрения зависимости. Для этого надо зарегистрировать репозиторий в коллекции сервиcов в проекте API.
-
-```ts
-@Module({
-  imports: [],
-  controllers: [AppController, UsersController],
-  providers: [
-    AppService,
-    {
-      provide: USER_REPOSITORY, // Используем строковый токен
-      useClass: UserMemoryRepository, // Указываем реализацию
-    },
-  ],
-})
-export class AppModule {}
-```
-
-для этого надо изменить интерфейс и добавить токен:
-
-```ts
-export const USER_REPOSITORY = 'USER_REPOSITORY'; // Создаем строковый токен
-
-export interface IUserRepository {
-  create(createUserDto: CreateUserDto): unknown;
-  findOne(arg0: number): unknown;
-  update(arg0: number, updateUserDto: UpdateUserDto): unknown;
-  remove(arg0: number): unknown;
-  findAll(): User[];
-}
-```
-
-- запустите проект и проверьте все конечные точки по пути `http://localhost:[port]/swagger/index.html`
+- запустите проект и проверьте все конечные точки в `UsersController`
 
 # Валидация модели
 
-Установка валидаторов
+- установим зависимость
 
-- `npm install class-validator class-transformer`
+`
+	// Валидация модели
+	implementation("org.springframework.boot:spring-boot-starter-validation")
+`
 
-При отравке пост запросов надо проверять модель данных на соответствие валидности.
+- добавьте валидацию на поле модели User:
 
-Атрибут для проверки минимального длины имени
-
-```ts
-import { IsNumber, IsString, Length } from 'class-validator';
-
-export class User {
-  @IsNumber()
-  id: number;
-
-  @IsString()
-  @Length(3, 5, { message: 'Минимальная длина имени 3, максимальная 5' })
-  name: string;
-}
+```kt
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
+    val name: String = ""
 ```
 
-Для создания собственного атрибута валидации создайте папку `validations` и в ней создайте класс `customtext.validator.ts`:
+- добавьте валидацию в метод @Post в контроллере:
 
-```ts
-import {
-  ValidatorConstraint,
-  ValidatorConstraintInterface,
-  ValidationArguments,
-} from 'class-validator';
-
-@ValidatorConstraint({ name: 'customText', async: false })
-export class CustomTextValidator implements ValidatorConstraintInterface {
-  validate(text: string, args: ValidationArguments) {
-    return text === 'valid'; // Пример кастомной логики
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return 'Text is not valid!';
-  }
-}
+```kt
+    @PostMapping
+    fun createUser(@Valid @RequestBody user: User): User = userRepository.save(user)
 ```
 
-Таким образом модель будет выглядеть следующим образом:
-
-```ts
-export class User {
-  @IsNumber()
-  id: number;
-
-  @Validate(CustomTextValidator)
-  @IsString()
-  @Length(3, 5, { message: 'Минимальная длина имени 3, максимальная 5' })
-  name: string;
-}
-```
 
 # Инструменты для тестирования API
 
@@ -369,39 +317,16 @@ export class User {
 
 2. Postman
 
-3. Запросы посредством файлов с расширением .http. Создайте в корнейвой директории папку `requests` в которой создайте файл с расширением http. Например, `getusers.http`. Для работы этого способа проверьте наличие расширения в vscode: REST Client.
-
-Пример файла get-запроса get.http
-
-```
-@api = http://localhost:5137
-GET {{api}}/Users
-```
-
-Пример файла postuser.http
-
-```
-@api = http://localhost:5137
-POST {{api}}/Users
-Content-Type:  application/json
-
-{
-  "id": 0,
-  "name": "String"
-}
-```
-
-Проверка запросов осуществляется с помощью VS Code.
-
 **Задание 1**: проверьте все методы валидации при отправке POST запроса на создания пользователя во всех средствах тестирования API
 
-**Подсказка**: @HttpCode(HttpStatus.CREATED)
 
 **Задание 2**: Создайте модель `Role`, а также интерфейс, репозиторий, контроллер, валидации.
 
 Фиксация изменений в git: "Создание RolesController"
 
 **Задание 3**: при запросе post на создание нового ресурса обычно принято отвечать кодом `201`. Примените метод `Created` для возврата ответа типа `ActionResult`
+**Подсказка**: ```ResponseEntity.status(HttpStatus.CREATED).body(savedUser)```
+
 
 Фиксация изменений в git: Реализация статус-кода 201 в методе контроллера для создания пользователя
 
@@ -411,39 +336,37 @@ Content-Type:  application/json
 - перейдите в master
 - выполните команду git rebase sprint1
 
-# Рефакторинг
-
-- установите расширение Material Icons для удобства работы и включите с помощью команды `>material icon` по F1
-- в настройках settings => exclude: внесите шаблоны для `bin` и `obj`
-- добавьте горячие клавиши Ctrl+ Пробел для "лампочки".
-
-# Возможные ошибки и их решения
-
-## Ошибка скачивания пакетов с nuget.org
-
-- dotnet nuget locals all --clear
-- dotnet dev-certs https --check --trust
-
-или удалить nuget.config и перезагрузить обязательно
 
 # CORS
 
-main.ts
+- создайте новую конфигурацию `CorsConfig`:
 
-```ts
-app.enableCors();
+```kt
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-// Или с кастомными настройками
-app.enableCors({
-  origin: 'https://example.com', // Разрешенный домен
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешенные HTTP-методы
-  allowedHeaders: 'Content-Type, Accept', // Разрешенные заголовки
-  credentials: true, // Разрешить передачу кук и заголовков авторизации
-});
+@Configuration
+class CorsConfig {
+
+    @Bean
+    fun corsConfigurer(): WebMvcConfigurer {
+        return object : WebMvcConfigurer {
+            override fun addCorsMappings(registry: CorsRegistry) {
+                registry.addMapping("/**")
+                    .allowedOrigins("http://localhost:3000", "https://your-production-domain.com")
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                    .allowedHeaders("*")
+                    .allowCredentials(true)
+                    .maxAge(3600)
+            }
+        }
+    }
+}
 ```
 
 ## Документация API через Swagger
 
-- документация доступна по адресу swagger с добавлением `-json`, например
-`http://localhost:3000/api-json`
+- документация доступна по адресу http://localhost:8080/v3/api-docs
 - потом можно создать коллекцию в Postman
