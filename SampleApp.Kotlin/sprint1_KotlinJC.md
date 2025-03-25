@@ -1,75 +1,38 @@
-# Основные функции
+# Kotlin JC 
+ 
+ Начало работы
 
-- в Idea создайте новый проект `SampleApp.API`
+- откройте командную строку,
+- создайте папку SampleApp: mkdir SampleApp
+- перейдите в нее: cd SampleApp
 
-**Замечание**: можно настраивавать начальный проект через сайт Spring Initializer
+- в Idea создайте новый проект
 
-- добавьте зависимости для Spring и g
 
-build.gradle.kts
-`
-  implementation("org.springframework.boot:spring-boot-starter-web")
-  implementation("org.jetbrains.kotlin:kotlin-reflect")
-`
+# Подготовка редактора Visual Code
 
-- в секцию plugins занесите настройки:
+- File - Autosave
 
-build.gradle.kts
-```
-plugins {
-    kotlin("jvm") version "2.1.0"
-    kotlin("plugin.spring") version "2.1.0"
-    id("org.springframework.boot") version "3.4.4"
-    id("io.spring.dependency-management") version "1.1.7"
-}
-```
+# Использование nest cli для построения архитектуры приложения
 
-- в папке `kotlin` создайте новый package с именем `com.kotlinapi` и внутри этого пакета создайте точку входа для приложения Spring:
+- проверьте версию node командой: `node --v`.
 
-```kt
-package com.kotlinapi
+# Установка инструментов конмандой строки для работы с Nest
 
-@SpringBootApplication
-class KotlinAPIApplication
+- npm i -g @nestjs/cli
+- создайте проект `nest new SampleApp.Nest`
+- удалите папку .git внутри проекта nest
 
-fun main(args: Array<String>) {
-    runApplication<KotlinAPIApplication>(*args)
-}
-```
+Для проверки работоспособности приложения запустите API: `nest start`.
 
-- для проверки работоспособности приложения запустите API в Idea
+**Замечание**: для горячей перезагрузки сервера примените команду `nest start --watch`.
 
-- в пакете `com.koltnapi` создайте новый пакет `controllers` и создайте новый класс контроллера `HelloController.kt`:
+У вас по конечной точке http://localhost:3000/hello должен выводится результат в формате json.
 
-```kt
-package com.kotlinapi.controllers
-
-@RestController
-@RequestMapping("/api")
-class HelloController {
-
-    @GetMapping("/hello")
-    fun sayHello(): String {
-        return "Hello, Spring Boot!"
-    }
-}
-```
-
-- проверьте в браузере работу конечной точки: ```http://localhost:8080/api/hello```
+**Примечание**: номер порта может быть другим.
 
 - добавьте в решение файл `readme.md`
-- фиксация изменений в git с сообщением: "Создание начального проекта API на Spring Kotlin"
-
-
-# Подключение Swagger
-
-- добавьте зависимоть
-
-
-```
-
-```
-
+- фиксация изменений в git с сообщением: "Создание начального проекта API на Nest"
 
 ## Разработка домена приложения. Модель пользователя
 
