@@ -1,7 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:sampleapp_flutter/models/User.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 void main() {
   runApp(const MyApp());
+}
+
+class UserList extends StatefulWidget {
+  const UserList({super.key});
+
+  @override
+  _UserListState createState() => _UserListState();
+}
+
+class _UserListState extends State<UserList> {
+  List<User> _users = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsers();
+  }
+
+  Future<void> _fetchUsers() async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://jsonplaceholder.typicode.com/users'),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _users = data.map((json) => User.fromJson(json)).toList();
+          _isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load users');
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('User Lis11111'),
+      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: _users.length,
+              itemBuilder: (context, index) {
+                final user = _users[index];
+                return ListTile(
+                  title: Text(user.name),
+                  subtitle: Text('ID: ${user.id}'),
+                );
+              },
+            ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -30,93 +97,8 @@ class MyApp extends StatelessWidget {
         // проверить с помощью горячей перезагрузки.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
       ),
-      home: const MyHomePage(title: 'Flutter Page'),
+      home: UserList(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // Этот виджет является домашней страницей вашего приложения. Он имеет состояние, то есть
-  // что у него есть объект State (определенный ниже), который содержит поля, влияющие на то.
-  // как она выглядит.
-
-  // Этот класс является конфигурацией для состояния. Он хранит значения (в данном
-  // случае заголовок), предоставленные родителем (в данном случае виджетом App) и
-  // используемые методом сборки состояния. Поля в подклассе виджета
-  // всегда помечены как «final».
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // Этот вызов setState сообщает фреймворку Flutter, что в этом состоянии что-то // изменилось.
-      // изменилось в этом состоянии, что заставляет его повторно запустить метод сборки ниже
-      // чтобы на экране отобразились обновленные значения. Если мы изменили
-      // _counter без вызова setState(), то метод build не был бы
-      // вызываться снова, и, следовательно, ничего бы не произошло.
-      _counter++;
-    });
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-    // Этот метод запускается заново каждый раз, когда вызывается setState, например, как это сделано
-    // в методе _incrementCounter выше.
-    //
-    // Фреймворк Flutter был оптимизирован, чтобы сделать повторное выполнение методов сборки
-    // быстро, так что вы можете просто перестроить все, что нуждается в обновлении, вместо того чтобы
-    // чем по отдельности изменять экземпляры виджетов.
-    return Scaffold(
-      appBar: AppBar(
-        // ПОПРОБУЙТЕ ЭТО: Попробуйте изменить здесь цвет на определенный (на
-        // Colors.amber, возможно?) и вызвать горячую перезагрузку, чтобы увидеть, как AppBar
-        // изменит цвет, в то время как остальные цвета останутся прежними.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Здесь мы берем значение из объекта MyHomePage, который был создан методом
-        // методом App.build, и используем его для установки заголовка нашей панели приложений.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center - это виджет компоновки. Он принимает одного дочернего элемента и размещает его
-        // в центре родительского
-        child: Column(
-          // Column также является виджетом компоновки. Он принимает список дочерних элементов и
-          // располагает их по вертикали. По умолчанию он подгоняет себя по размеру
-          // дочерних элементов по горизонтали и старается быть такой же высоты, как родитель.
-          //
-          // Column имеет различные свойства для управления размерами и
-          // как он позиционирует свои дочерние элементы. Здесь мы используем mainAxisAlignment, чтобы
-          // центрировать дочерние элементы по вертикали; главной осью здесь является вертикальная
-          // ось, потому что колонки вертикальные (поперечная ось была бы
-          // горизонтальная).
-          //
-          // ПОПРОБУЙТЕ ЭТО: Вызовите «отладочное рисование» (выберите действие «Toggle Debug Paint»
-          // действие в IDE или нажмите «p» в консоли), чтобы увидеть
-          // проволочный каркас для каждого виджета.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // Эта запятая в конце делает автоформатирование более приятным для методов сборки.
-    );
-  }
-}
