@@ -1,3 +1,6 @@
 package com.example.sampleappkotlin.models
 
-data class User()
+data class User(
+    val id: Int,
+    val name: String
+)
