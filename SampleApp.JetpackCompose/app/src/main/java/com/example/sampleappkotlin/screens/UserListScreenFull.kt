@@ -28,9 +28,10 @@ interface ApiService {
     suspend fun getUsers(): List<User>
 }
 
+// https://jsonplaceholder.typicode.com/
 // 3. Создаем Retrofit клиент
 private val retrofit = Retrofit.Builder()
-    .baseUrl("https://jsonplaceholder.typicode.com/")
+    .baseUrl("http://192.168.4.90:8080/users/")
     .addConverterFactory(GsonConverterFactory.create())
     .build()
 
