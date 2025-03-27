@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { UpdateUserDto } from 'src/dto/update-user.dto';
 import { IUserRepository } from 'src/interfaces/user.repository.';
 
 import { User } from 'src/models/user.entity';
 
 @Injectable()
-export class UserMemoryRepository implements IUserRepository {
+export class UserMemoryRepository {
   
   users: User[] = [];
 
