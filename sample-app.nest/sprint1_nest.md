@@ -406,3 +406,68 @@ app.enableCors({
 - документация доступна по адресу swagger с добавлением `-json`, например
 `http://localhost:3000/api-json`
 - потом можно создать коллекцию в Postman
+
+
+# Миграции
+
+## Модель Role
+
+```ts
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm"
+
+@Entity({ name: "Roles" })
+export default class Role {
+    @PrimaryGeneratedColumn()
+    id: number
+
+    @Column()
+    title: string
+
+    @Column()
+    text: string
+}
+```
+
+## data-source.ts
+
+```ts
+import "reflect-metadata"
+import { DataSource } from "typeorm"
+import Role from "./models/role.entity"
+
+export const AppDataSource = new DataSource({
+    type: "postgres",
+    host: "localhost",
+    port: 5432,
+    username: "postgres",
+    password: "root",
+    database: "SampleApp",
+    synchronize: true,
+    logging: false,
+    entities: [Role],
+    migrations: ["src/migrations/*.ts"],  // <- откуда загружать миграции
+    migrationsTableName: "migrations",
+})
+
+```
+
+- npm install -g typeorm
+- npm install ts-node --save-dev (для моделей ts)
+
+
+- настроить package.json секция script:
+
+```json
+"typeorm": "typeorm-ts-node-commonjs -d ./src/data-source.ts"
+```
+
+- чтобы сразу указать папку с миграциями при создании
+```json
+"typeorm": "cd ./src/migrations && typeorm-ts-node-commonjs -d ../data-source.ts "
+```
+
+- генерация миграции
+`npm run typeorm migration:generate Init`
+
+- запуск миграции
+`npm run typeorm migration:run`
