@@ -24,4 +24,4 @@ Ionic
 
 Nest
 
-- на основе angular, есть 3 основыне orm: prisma, typeorm, mikroorm.  
+- на основе angular, есть 3 основные orm: prisma, typeorm, mikroorm.  
