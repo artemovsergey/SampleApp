@@ -8,10 +8,16 @@ using SampleApp.API.Entities;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SeedController(SampleContext db) : ControllerBase
+public class SeedController : ControllerBase
 {
 
+    private readonly SampleContext db;
+    public SeedController(SampleContext _db)
+    {
+      db = _db;
+    }
 
+  
     [HttpGet("generate")]
     public ActionResult SeedUsers()
     {

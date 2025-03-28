@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit {
   title: String = "Пользователи"
   users: User[] = []
   userService = inject(UsersService)
-  displayedColumns = ["id", "name"]
+  displayedColumns = ["id", "login"]
 
   ngOnInit() {
     this.userService.getAll().pipe(

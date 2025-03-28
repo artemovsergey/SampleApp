@@ -4,8 +4,15 @@ using SampleApp.API.Entities;
 
 namespace SampleApp.API.Repositories;
 
-public class UsersLocalRepository(SampleContext db) : IUserRepository
+public class UsersLocalRepository : IUserRepository
 {
+
+    private readonly SampleContext db;
+    public UsersLocalRepository(SampleContext _db)
+    {
+      db = _db;
+    }
+
     public List<User> GetUsers()
     {
         return db.Users.ToList();

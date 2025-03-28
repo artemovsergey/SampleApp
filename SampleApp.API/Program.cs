@@ -4,7 +4,7 @@ using SampleApp.API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
-builder.Services.AddOpenApi();
+// builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
@@ -15,7 +15,7 @@ builder.Services.AddDbContext<SampleContext>(o => o.UseSqlite(builder.Configurat
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-app.MapOpenApi();
+// app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapControllers();
