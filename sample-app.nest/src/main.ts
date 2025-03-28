@@ -13,7 +13,7 @@ async function bootstrap() {
     .addTag('пример')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  console.log(document);
+  // console.log(document);
   SwaggerModule.setup('api', app, document);
 
   // Включение CORS с настройками по умолчанию

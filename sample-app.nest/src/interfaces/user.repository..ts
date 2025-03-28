@@ -1,4 +1,3 @@
-import { UpdateUserDto } from "src/dto/update-user.dto";
 // import { User } from "src/models/user.entity";
 import { User } from '@prisma/client';
 export const USER_REPOSITORY = 'USER_REPOSITORY'; // Создаем строковый токен

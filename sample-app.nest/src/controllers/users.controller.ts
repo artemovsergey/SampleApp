@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Inject, HttpCode, HttpStatus, NotFoundException } from '@nestjs/common';
 import { IUserRepository, USER_REPOSITORY } from 'src/interfaces/user.repository.';
-import { User } from 'src/models/user.entity';
+import { User } from '@prisma/client';  // Используем Prisma-тип
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { User as UserEntity } from 'src/models/user.entity';
 
 @Controller('api/users')
 export class UsersController {
@@ -12,21 +13,20 @@ export class UsersController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: User })
+  @ApiBody({ type: UserEntity })
   @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() user: User) : User {
-    this.usersRepository.create(user)
-    return user;
+  async create(@Body() user: User): Promise<User> {
+    return await this.usersRepository.create(user);
   }
 
   @Get()
-  findAll() {
-    return this.usersRepository.getAll();
+  async findAll(): Promise<User[]> {
+    return await this.usersRepository.findAll();
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<User> {
     const user = await this.usersRepository.findOne(+id);
     if (!user) {
       throw new NotFoundException('User not found');
@@ -35,13 +35,13 @@ export class UsersController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: User) {
-    return this.usersRepository.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: User): Promise<User> {
+    return await this.usersRepository.update(+id, updateUserDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.usersRepository.remove(+id);
+  async remove(@Param('id') id: string): Promise<void> {
+    await this.usersRepository.remove(+id);
   }
 }

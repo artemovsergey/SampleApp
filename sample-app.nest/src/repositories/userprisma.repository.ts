@@ -1,6 +1,5 @@
-// src/repositories/user.prisma.repository.ts
-import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 
+import { Injectable, NotFoundException, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { User, Post } from '@prisma/client';
 import { IUserRepository } from 'src/interfaces/user.repository.';
 import { PrismaService } from 'src/services/prisma.service';
@@ -31,6 +30,7 @@ export class UserPrismaRepository implements IUserRepository {
         },
       });
     } catch (error) {
+      console.log(error)
       this.handlePrismaError(error);
     }
   }
