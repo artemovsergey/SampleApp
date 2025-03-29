@@ -1,0 +1,29 @@
+<ion-content class="ion-padding">
+  <div class="users-container">
+    <ion-title class="ion-text-center">
+      <h3>Пользователи</h3>
+    </ion-title>
+
+    <ion-list lines="full">
+
+      <ion-item class="header-item">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="4"><strong>Id</strong></ion-col>
+            <ion-col><strong>Login</strong></ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+
+
+      <ion-item *ngFor="let user of users">
+        <ion-grid>
+          <ion-row>
+            <ion-col size="4">{{user.id}}</ion-col>
+            <ion-col>{{user.login}}</ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content> 

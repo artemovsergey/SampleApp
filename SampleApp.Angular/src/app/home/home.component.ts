@@ -11,17 +11,8 @@ import {MatTableModule} from '@angular/material/table';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
 
-  title: String = "Пользователи"
-  users: User[] = []
-  userService = inject(UsersService)
-  displayedColumns = ["id", "login"]
-
-  ngOnInit() {
-    this.userService.getAll().pipe(
-      tap((r) => console.log(r))
-    ).subscribe({ next: (r) => this.users = r})
-  }
+  title: String = "Добро пожаловать"
 
 }

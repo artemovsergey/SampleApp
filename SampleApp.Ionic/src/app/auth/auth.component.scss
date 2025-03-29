@@ -1,0 +1,16 @@
+.auth-container {
+    max-width: 400px;
+    margin: 5rem auto;
+    padding-top: 20px;
+    
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 30px;
+    }
+    
+    ion-item {
+      margin-bottom: 15px;
+      --padding-start: 0;
+      --inner-padding-end: 0;
+    }
+  }

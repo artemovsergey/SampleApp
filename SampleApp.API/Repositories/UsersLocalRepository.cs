@@ -51,5 +51,16 @@ public class UsersLocalRepository : IUserRepository
         throw new NotImplementedException();
     }
 
+    public User FindUser(string login)
+    {
+       var user = db.Users.Where(u => u.Login == login).FirstOrDefault();
+       if(user != null){
+          return user;
+       }
+       else{
+        throw new Exception("Нет пользователя с таким логином!");
+       }
+    }
+
     // another methods interface without implementation
 }

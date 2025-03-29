@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from 'src/models/user';
-import { UsersService } from 'src/services/users.serveces';
+import { UsersService } from 'src/services/users.services';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 
