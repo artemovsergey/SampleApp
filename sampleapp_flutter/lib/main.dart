@@ -3,6 +3,8 @@ import 'package:sampleapp_flutter/models/User.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:sampleapp_flutter/screens/counter.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -80,24 +82,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // Это тема вашего приложения.
-        //
-        // ПОПРОБУЙТЕ ЭТО: Попробуйте запустить ваше приложение с помощью команды «flutter run». Вы увидите.
-        // что у приложения появилась фиолетовая панель инструментов. Затем, не выходя из приложения,
-        // попробуйте изменить seedColor в цветовой схеме ниже на Colors.green
-        // и затем вызовите «горячую перезагрузку» (сохраните изменения или нажмите кнопку «горячая
-        // перезагрузка» в IDE, поддерживающей Flutter, или нажмите „r“, если вы использовали
-        // командную строку для запуска приложения).
-        //
-        // Заметьте, что счетчик не обнулился; состояние приложения
-        // состояние не было потеряно во время перезагрузки. Чтобы сбросить состояние, используйте горячий
-        // перезагрузку вместо этого.
-        //
-        // Это работает и для кода, а не только для значений: Большинство изменений кода можно
-        // проверить с помощью горячей перезагрузки.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightGreenAccent),
       ),
-      home: UserList(),
+      home: Counter(),
     );
   }
 }
