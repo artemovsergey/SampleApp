@@ -17,16 +17,12 @@ import { home, people, logIn, logOut } from 'ionicons/icons';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   authService = inject(AuthService);
   router = inject(Router);
 
   constructor() {
     addIcons({ home, people, logIn, logOut });
-  }
-
-  ngOnInit(): void {
-    
   }
 
   login() {

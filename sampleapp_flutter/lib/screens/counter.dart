@@ -21,7 +21,7 @@ class CounterState extends State<Counter> {
 
   void onPressed() {
     setState(() {
-          text = "Нажато!";
+          text = "Нажато12313131";
     });
   }
 
