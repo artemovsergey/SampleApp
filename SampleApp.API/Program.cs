@@ -18,9 +18,6 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthorization();
 builder.Services.AddJwtServices(config);
 
-
-
-
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
