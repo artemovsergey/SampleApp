@@ -1,19 +1,43 @@
-﻿import { Injectable } from "@angular/core";
-import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from "@angular/router";
+﻿import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { ToastrService } from 'ngx-toastr';
+import { map, Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
 
-@Injectable()
-export class AuthGuard  {
-  constructor(private router: Router) {}
+@Injectable({
+  providedIn: 'root'
+})
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (typeof window !== "undefined") {
-      if (localStorage.getItem("currentUser")) {
-        // logged in so return true
-        return true;
-      }
+export class authGuard implements CanActivate{
+  
+  // guard автоматически подписывается на Observable
+  constructor(private authService: AuthService, 
+              private toast: ToastrService,
+              private router: Router){ 
+  }
+
+  canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+
+    const storedUser = JSON.parse(localStorage.getItem("user")!);
+    if (storedUser) {
+      this.authService.currentUser$.next(storedUser)
     }
-    // not logged in so redirect to login page with the return url
-    this.router.navigate(["/login"], { queryParams: { returnUrl: state.url } });
-    return false;
+    else{
+      this.authService.currentUser$.next(null!)
+    }
+
+    return this.authService.currentUser$.pipe(
+      map(user => {
+        
+        if (!user) {
+          this.toast.error("Пользователь не авторизован");
+          this.router.navigate(["/sign"], { queryParams: { returnUrl: state.url } });
+          return false;
+        }
+        
+        return true;
+      })
+
+    );
   }
 }
