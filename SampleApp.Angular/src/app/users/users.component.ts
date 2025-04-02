@@ -23,4 +23,36 @@ export class UsersComponent {
       .pipe(tap((r) => console.log(r)))
       .subscribe({ next: (r) => (this.users = r) });
   }
+
+
+  deleteTask(task: any) {
+
+    const buttonElement = document.activeElement as HTMLElement; // Get the currently focused element
+    buttonElement.blur(); // Remove focus from the button
+    
+  
+    // открытие окна
+    // const dialogRef = this.dialog.open(
+    //   ConfirmDeleteTaskDialogComponent,
+    //   {data: [task], autoFocus: true, width: '50%'}  // конфигурация
+    // );
+
+    // dialogRef.afterClosed().subscribe(result => {
+    //   if (result) {
+    //     console.log('процедура удаления задачи...')
+    //     this.taskService.del(task.id).subscribe(
+    //       next => {
+    //         console.log("Удаление завершено!")
+
+    //         this.taskService.getAll().subscribe(r => {
+    //           this.taskService.tasks$.next(r)
+    //         })
+            
+    //         }
+    //     )
+    //   }
+    // });
+
+}
+
 }

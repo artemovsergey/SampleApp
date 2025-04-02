@@ -1,0 +1,13 @@
+
+<h1 mat-dialog-title style="margin-left: -5px;"> Подтверждение удаления {{data[0].title}} </h1>
+
+<mat-dialog-content>
+Категория {{data[0].category?.title}}
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-stroked-button color="primary"  (click) = "no()" cdkFocusInitial>Нет</button>
+  <button mat-flat-button color="primary" (click) = "confirm()" >Да</button>
+</mat-dialog-actions>
+
+ 
