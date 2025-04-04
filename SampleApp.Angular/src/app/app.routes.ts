@@ -6,6 +6,7 @@ import { AuthComponent } from './auth/auth.component';
 import { SignComponent } from './sign/sign.component';
 import { preventUnsavedChangesGuard } from '../guards/prevent-unsaved-changed.guard';
 import { authGuard } from '../guards/auth.guard';
+import { ProfileComponent } from './profile/profile.component';
 
 export const routes: Routes = [
 
@@ -17,12 +18,12 @@ export const routes: Routes = [
             { path: 'profile', component: HomeComponent},
             { path: 'user/edit', component: HomeComponent, canDeactivate:[preventUnsavedChangesGuard]},
             { path: 'users', component: UsersComponent },
-            // { path: 'users/:id', component: UserComponent },
+     
         ]
     },
 
     { path: 'header', component: HeaderComponent },
-
+    { path: 'users/:id', component: ProfileComponent },
     { path: 'home', component: HomeComponent },
     { path: 'auth', component: AuthComponent },
     { path: 'sign', component: SignComponent },

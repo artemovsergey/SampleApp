@@ -1,32 +1,35 @@
-<mat-toolbar color="primary">
+<mat-toolbar color="primary" class="header">
 
-	<button [routerLink]="['/']"
-		mat-button>
+	<button [routerLink]="['/']" mat-button>
 		<mat-icon>home</mat-icon>
 		Home
-	</button>
+	</button>		
 
-	<button *ngIf="authService.currentUser$ | async"
-		[routerLink]="['/users']"
-		mat-button>
+	<button *ngIf="authService.currentUser$ | async" [routerLink]="['/users']" mat-button>
 		<mat-icon>people</mat-icon>
 		Пользователи
 	</button>
 
-	<button *ngIf="authService.currentUser$ | async"
-		(click)="logout()"
-		mat-button
-		type="button">
+	<!-- <button *ngIf="authService.currentUser$ | async" (click)="logout()" mat-button type="button">
 		<mat-icon>logout</mat-icon>
 		Выход
-	</button>
+	</button> -->
 
-	<button *ngIf="(authService.currentUser$ | async) == null"
-		(click)="logout()"
-		mat-button
-		type="button">
+	<button *ngIf="(authService.currentUser$ | async) == null" (click)="logout()" mat-button type="button">
 		<mat-icon>login</mat-icon>
 		Вход
 	</button>
+
+	<button *ngIf="(authService.currentUser$ | async) != null" mat-button [matMenuTriggerFor]="menu" style="margin-left: auto;">{{(authService.currentUser$ | async)?.id}}</button>
+	<mat-menu #menu="matMenu">
+		<button mat-menu-item [routerLink]="['/users',(authService.currentUser$ | async)?.id]" >Профиль</button>
+		<button mat-menu-item>Обновление</button>
+		<button *ngIf="authService.currentUser$ | async" (click)="logout()" mat-menu-item type="button">
+			<mat-icon>logout</mat-icon>
+			Выход
+		</button>
+
+	</mat-menu>
+
 
 </mat-toolbar>

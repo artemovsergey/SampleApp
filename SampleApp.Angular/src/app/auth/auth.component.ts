@@ -27,7 +27,7 @@ export class AuthComponent {
   router = inject(Router);
 
   login() {
-    this.authService.login(this.model).subscribe({
+    this.authService.loginwithtoken(this.model).subscribe({
       next: (v) => this.router.navigate(['home']),
       error: (e) => console.error(e),
       complete: () => console.info('complete'),
