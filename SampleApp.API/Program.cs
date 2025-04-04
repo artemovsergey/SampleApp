@@ -14,7 +14,7 @@ builder.Services.AddScoped<IUserRepository, UsersLocalRepository>();
 builder.Services.AddCors();
 
 // builder.Services.AddDbContext<SampleContext>(o => o.UseNpgsql(config.GetConnectionString("PostgreSQL")));
-builder.Services.AddDbContext<SampleContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLDocker")));
+builder.Services.AddDbContext<SampleContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQL")));
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthorization();
 builder.Services.AddJwtServices(config);
