@@ -16,9 +16,13 @@ RUN dotnet build "SampleApp.API.csproj" -c $configuration -o /app/build
 
 FROM build AS publish
 ARG configuration=Release
-RUN dotnet publish "SampleApp.API.csproj" -c $configuration -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "SampleApp.API.csproj" -c $configuration -f net9.0 -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# COPY ./certificate/localhost.key /app/certificate/localhost.key
+# COPY ./certificate/localhost.crt /app/certificate/localhost.crt
+
 ENTRYPOINT ["dotnet", "SampleApp.API.dll"]

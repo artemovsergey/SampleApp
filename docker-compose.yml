@@ -1,12 +1,64 @@
-# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP.NET Core service.
+  services:
 
-version: '3.4'
+    # nginx:
+    #   container_name: ProjectStoreNginx
+    #   build:
+    #     context: .
+    #     dockerfile: loadbalancer/Dockerfile
+    #   restart: always
+    #   ports:
+    #     - "80:80"
+    #     - "443:443"
+    #   networks:
+    #     - network
+    #   depends_on:
+    #     - api
 
-services:
-  sampleappapi:
-    image: sampleappapi
-    build:
-      context: .
-      dockerfile: SampleApp.API/Dockerfile
-    ports:
-      - 5299:5299
+    # angular:
+    #   container_name: ProjectStoreAngular
+    #   restart: always
+    #   build:
+    #     context: .
+    #     dockerfile: Presentation/Example.Angular/Dockerfile
+    #   ports:
+    #     - "4201:4200"
+    #   depends_on:
+    #     - api
+    #   networks:
+    #     - network
+
+    api:
+      container_name: sampleapp-api
+      image: sampleapp.api
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Production
+      build:
+        context: .
+        dockerfile: SampleApp.API/Dockerfile
+      ports:
+        - "5001:5299"
+      networks:
+        - network
+      depends_on:
+        - db
+
+    db:
+      container_name: SampleAppPostgreSQL
+      image: postgres:latest
+      environment:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: root
+        POSTGRES_DB: SampleApp
+      ports:
+        - "5433:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      networks:
+        - network
+
+  volumes:
+    postgres_data:
+
+  networks:
+    network:
+      driver: bridge

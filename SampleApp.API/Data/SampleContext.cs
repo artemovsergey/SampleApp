@@ -9,6 +9,6 @@ public class SampleContext : DbContext
 
     public SampleContext(DbContextOptions<SampleContext> opt) : base(opt)
     {
-        
+        Database.Migrate();
     }
 }

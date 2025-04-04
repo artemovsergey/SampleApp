@@ -1,0 +1,41 @@
+---
+# 1. Deployment для API (управляет подами)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sampleapp-api
+spec:
+  replicas: 1  # Количество копий вашего API
+  selector:
+    matchLabels:
+      app: sampleapp-api
+  template:
+    metadata:
+      labels:
+        app: sampleapp-api
+    spec:
+      containers:
+      - name: sampleapp-api
+        image: sampleapp.api  # Локальный образ (для Minikube) или ваш-логин/sampleapp.api:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5299  # Порт, который слушает ваше приложение
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ConnectionStrings__DefaultConnection
+          value: "Host=postgres;Database=SampleApp;Username=postgres;Password=root"
+
+---
+# 2. Service для доступа к API внутри кластера
+apiVersion: v1
+kind: Service
+metadata:
+  name: sampleapp-api
+spec:
+  selector:
+    app: sampleapp-api
+  ports:
+    - protocol: TCP
+      port: 80       # Порт сервиса
+      targetPort: 5299  # Порт контейнера
