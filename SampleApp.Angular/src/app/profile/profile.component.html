@@ -1,0 +1,5 @@
+<p>profile works!</p>
+
+<p>
+    {{(authService.currentUser$ | async)?.id ?? "Нет пользователя"}}
+</p>

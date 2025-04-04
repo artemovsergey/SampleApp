@@ -5,6 +5,8 @@ import { take } from 'rxjs';
 
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   
+  console.log("jwtInterceptor ... ")
+
   const authService = inject(AuthService);
   let currentUser: any;
   authService.currentUser$.pipe(take(1)).subscribe(u => currentUser = u)
