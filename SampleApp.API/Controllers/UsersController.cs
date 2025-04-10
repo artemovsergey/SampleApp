@@ -46,6 +46,7 @@ public class UsersController : ControllerBase
 
     // [Authorize]
     [HttpGet]
+    [ResponseCache(Duration = 86400)]
     public ActionResult GetUsers()
     {
         return Ok(_repo.GetUsers());
