@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Data.SqlTypes;
 using System.Net;
 using System.Text.Json;
@@ -50,6 +51,7 @@ public class ExceptionHandlerMiddleware
                 message = ex.Message;
                 messagedetail = ex.StackTrace?.ToString();
                 break;
+
             case BadHttpRequestException badRequestException:
                 httpStatusCode = HttpStatusCode.BadRequest;
                 message = badRequestException.Message;

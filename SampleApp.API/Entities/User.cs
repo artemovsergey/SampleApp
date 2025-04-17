@@ -10,6 +10,7 @@ public class User : Base
     [UserNameMaxLengthValidation(10)]
     public string Name { get; set; } = String.Empty;
 
+    [MinLength(5, ErrorMessage = "Минимальное длина логина 5")]
     public required string Login { get; set; }
     public required byte[] PasswordHash { get; set; }
     public required byte[] PasswordSalt { get; set; }

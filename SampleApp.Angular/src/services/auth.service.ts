@@ -8,8 +8,7 @@ import User from '../models/user.entity';
   providedIn: 'root'
 })
 export class AuthService {
-
-
+  
   http = inject(HttpClient)
   currentUser$ = new ReplaySubject<User>(1);
 

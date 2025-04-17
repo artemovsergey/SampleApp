@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using SampleApp.API.Data;
 using SampleApp.API.Extensions;
 using SampleApp.API.Interfaces;
+using SampleApp.API.Middleware;
 using SampleApp.API.Repositories;
 using SampleApp.API.Services;
 
@@ -19,8 +21,10 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthorization();
 builder.Services.AddJwtServices(config);
 
+
 var app = builder.Build();
 app.UseHttpsRedirection();
+app.UseMiddleware<SampleApp.API.Middleware.ExceptionHandlerMiddleware>();
 app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 // app.MapOpenApi();
 app.UseSwagger();
